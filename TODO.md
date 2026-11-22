@@ -16,13 +16,13 @@
 
 ## 3. Port TODO.md ffmpeg scripts into modular operations
 
-- [ ] Create an ffmpeg/operations package (e.g., operations/ or recapper/ops/) and extract logic from TODO.md into discrete modules/functions. Remove YAML/CLI coupling; keep pure “inputs + params -> ffmpeg execution/artifact”.
-- [ ] title-slide operation: port title.run_ffmpeg; fix hardcoded font path by resolving a bundled/system font or configurable font; expose duration, background/color, title, subtitle, size/fps defaults.
-- [ ] image-to-video operation: port image_to_video; parameterize duration, resolution/aspect handling, fps, and output encoding.
-- [ ] images-to-side-by-side-video operation: port images_to_side_by_side_video; make layout/crop/size/duration configurable and validate inputs.
-- [ ] normalize/concat operations: port concatenate.py behavior. Keep the useful normalization (CFR, pixel format, audio presence/anullsrc injection, sample rate/channels) but fix the old run_from_list output-path bug and make temp/output handling deterministic.
-- [ ] Audio mix/overlay operation: port overlay_audio as a timeline-aware audio mix step (background music + clip audio where applicable), with volume controls and duration policy (shortest vs project length).
-- [ ] Shared ffmpeg utilities: command runner with stdout/stderr capture, structured errors, temp workspace management, probe helpers, and cancellation/cleanup. Preserve temp files only when debugging.
+- [x] Create an ffmpeg/operations package (e.g., operations/ or recapper/ops/) and extract logic from TODO.md into discrete modules/functions. Remove YAML/CLI coupling; keep pure “inputs + params -> ffmpeg execution/artifact”.
+- [x] title-slide operation: port title.run_ffmpeg; fix hardcoded font path by resolving a bundled/system font or configurable font; expose duration, background/color, title, subtitle, size/fps defaults.
+- [x] image-to-video operation: port image_to_video; parameterize duration, resolution/aspect handling, fps, and output encoding.
+- [x] images-to-side-by-side-video operation: port images_to_side_by_side_video; make layout/crop/size/duration configurable and validate inputs.
+- [x] normalize/concat operations: port concatenate.py behavior. Keep the useful normalization (CFR, pixel format, audio presence/anullsrc injection, sample rate/channels) but fix the old run_from_list output-path bug and make temp/output handling deterministic.
+- [x] Audio mix/overlay operation: port overlay_audio as a timeline-aware audio mix step (background music + clip audio where applicable), with volume controls and duration policy (shortest vs project length).
+- [x] Shared ffmpeg utilities: command runner with stdout/stderr capture, structured errors, temp workspace management, probe helpers, and cancellation/cleanup. Preserve temp files only when debugging.
 
 ## 4. Implement the render/export pipeline
 

@@ -1,22 +1,33 @@
 """FFmpeg/ffprobe utilities.
 
-Shared helpers for availability checks, probing, and command execution.
-Task 3 will extend this with full render command runners and temp workspace
-management.
+Shared helpers for availability checks, probing, command execution, and temp
+workspace management used by operations and the render pipeline.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 import json
+import os
 import shutil
 import subprocess
+import tempfile
 
 
 class FFmpegError(RuntimeError):
     pass
+
+
+class FFmpegCommandError(FFmpegError):
+    def __init__(self, cmd: Sequence[str], returncode: int, stdout: str, stderr: str):
+        self.cmd = list(cmd)
+        self.returncode = returncode
+        self.stdout = stdout
+        self.stderr = stderr
+        tail = "\n".join((stderr or stdout).strip().splitlines()[-20:])
+        super().__init__(f"ffmpeg command failed ({returncode}): {tail or 'no output'}")
 
 
 @dataclass
@@ -29,6 +40,24 @@ class CommandResult:
     @property
     def ok(self) -> bool:
         return self.returncode == 0
+
+
+@dataclass
+class TempWorkspace:
+    path: Path
+    keep: bool = False
+
+    def __enter__(self) -> "TempWorkspace":
+        self.path.mkdir(parents=True, exist_ok=True)
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        if not self.keep and self.path.exists():
+            shutil.rmtree(self.path, ignore_errors=True)
+
+    def file(self, name: str) -> Path:
+        self.path.mkdir(parents=True, exist_ok=True)
+        return self.path / name
 
 
 def which(cmd: str) -> str | None:
@@ -58,21 +87,39 @@ def check_system() -> dict[str, Any]:
     return result
 
 
-def run_command(cmd: list[str], timeout: int | None = None) -> CommandResult:
+def run_command(cmd: Sequence[str], timeout: int | None = None, cwd: str | Path | None = None) -> CommandResult:
     try:
         proc = subprocess.run(
-            cmd,
+            list(cmd),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
             timeout=timeout,
             check=False,
+            cwd=str(cwd) if cwd else None,
         )
     except FileNotFoundError as e:
         raise FFmpegError(f"Command not found: {cmd[0]}") from e
     except subprocess.TimeoutExpired as e:
         raise FFmpegError(f"Command timed out: {' '.join(cmd)}") from e
-    return CommandResult(cmd=cmd, returncode=proc.returncode, stdout=proc.stdout, stderr=proc.stderr)
+    return CommandResult(cmd=list(cmd), returncode=proc.returncode, stdout=proc.stdout, stderr=proc.stderr)
+
+
+def run_ffmpeg(cmd: Sequence[str], timeout: int | None = None, cwd: str | Path | None = None) -> CommandResult:
+    r = run_command(cmd, timeout=timeout, cwd=cwd)
+    if r.returncode != 0:
+        raise FFmpegCommandError(r.cmd, r.returncode, r.stdout, r.stderr)
+    return r
+
+
+def ensure_temp_dir(base: str | Path | None = None, prefix: str = "recapper-") -> Path:
+    if base:
+        p = Path(base)
+        p.mkdir(parents=True, exist_ok=True)
+        d = Path(tempfile.mkdtemp(prefix=prefix, dir=str(p)))
+    else:
+        d = Path(tempfile.mkdtemp(prefix=prefix))
+    return d
 
 
 def probe_media(path: str | Path) -> dict[str, Any]:
@@ -117,11 +164,9 @@ def probe_media(path: str | Path) -> dict[str, Any]:
                 pass
 
     media_type = "audio" if audio and not video else "video" if video else "image"
-    # Still images often show up as video stream; detect common image formats.
     fmt_name = (fmt.get("format_name") or "").lower()
-    if video and not audio and any(x in fmt_name for x in ["image", "jpeg", "png", "webp", "gif", "bmp", "tiff"]):
+    if video and not audio and any(x in fmt_name for x in ["image", "jpeg", "png", "webp", "gif", "bmp", "tiff", "mjpeg"]):
         media_type = "image"
-        # For images, duration is not meaningful unless looped.
         duration = duration if duration and duration > 0 else None
 
     return {
@@ -136,3 +181,45 @@ def probe_media(path: str | Path) -> dict[str, Any]:
         "size": int(fmt["size"]) if fmt.get("size") else None,
         "raw": raw,
     }
+
+
+def has_audio_stream(path: str | Path) -> bool:
+    try:
+        return bool(probe_media(path).get("has_audio"))
+    except Exception:
+        return False
+
+
+def resolve_font(preferred: str | None = None) -> str | None:
+    """Resolve a font path for ffmpeg drawtext. Returns a path or None."""
+    candidates: list[Path] = []
+    if preferred:
+        p = Path(preferred).expanduser()
+        if p.exists():
+            return str(p)
+        # Maybe a font name; let ffmpeg/fontconfig handle via font=... not implemented here.
+    # Common macOS/Linux locations
+    candidates.extend([
+        Path("/System/Library/Fonts/Supplemental/Arial.ttf"),
+        Path("/System/Library/Fonts/Supplemental/Arial Unicode.ttf"),
+        Path("/Library/Fonts/Arial.ttf"),
+        Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+        Path("/usr/share/fonts/dejavu/DejaVuSans.ttf"),
+        Path("/usr/share/fonts/TTF/DejaVuSans.ttf"),
+    ])
+    for c in candidates:
+        if c.exists():
+            return str(c)
+    return None
+
+
+def escape_drawtext(text: str) -> str:
+    # ffmpeg drawtext escaping: \ : ' and also handle newlines
+    return (
+        str(text)
+        .replace("\\", "\\\\")
+        .replace(":", "\\:")
+        .replace("'", "\\'")
+        .replace("%", "\\%")
+        .replace("\n", "\\n")
+    )
