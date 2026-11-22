@@ -26,11 +26,11 @@
 
 ## 4. Implement the render/export pipeline
 
-- [ ] Timeline compiler: convert project timeline into a deterministic render plan. Resolve clip ordering, track placement, gaps, trims, clip durations, and asset references.
-- [ ] Visual render pass: generate intermediate clips for operation-backed visual clips (title/image/composition) and normalize user video clips to a common render profile.
-- [ ] Audio render pass: build audio timeline from A1/music clips and any future clip audio; apply per-clip volume/gain; mix down to final audio.
-- [ ] Final assembly: concatenate/mux visual + audio into export target (mp4 default). Expose render settings in project/export: resolution, fps, codec/quality preset, output path/name.
-- [ ] Progress and diagnostics: emit coarse progress by stage/clip and surface ffmpeg stderr on failure; keep job logs for UI display.
+- [x] Timeline compiler: convert project timeline into a deterministic render plan. Resolve clip ordering, track placement, gaps, trims, clip durations, and asset references.
+- [x] Visual render pass: generate intermediate clips for operation-backed visual clips (title/image/composition) and normalize user video clips to a common render profile.
+- [x] Audio render pass: build audio timeline from A1/music clips and any future clip audio; apply per-clip volume/gain; mix down to final audio.
+- [x] Final assembly: concatenate/mux visual + audio into export target (mp4 default). Expose render settings in project/export: resolution, fps, codec/quality preset, output path/name.
+- [x] Progress and diagnostics: emit coarse progress by stage/clip and surface ffmpeg stderr on failure; keep job logs for UI display.
 
 ## 5. Wire the existing UI to real data and behavior
 

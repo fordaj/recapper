@@ -404,17 +404,33 @@ class RecapperHandler(SimpleHTTPRequestHandler):
             if "project" in body and isinstance(body["project"], dict):
                 proj = Project.from_dict(body["project"])
                 STATE["project"] = proj
-            # Create a job; actual render pipeline is implemented in Task 4.
+
+            output_name = body.get("output_name") or proj.render.output_name or "recap.mp4"
+            output_dir = body.get("output_dir")
+            if output_dir:
+                out_path = Path(output_dir).expanduser().resolve() / output_name
+            else:
+                base = STATE.get("project_path").parent if STATE.get("project_path") else Path(STATE["workspace"])
+                out_path = Path(base) / "exports" / output_name
+
             job = jobs.create("export", message="Export queued")
 
             def run_export(j):
-                # Placeholder until Task 4 wires the real pipeline.
-                j.update(stage="not_implemented", progress=0, message="Render pipeline not implemented yet")
-                j.log("Render/export pipeline will be implemented in Task 4.")
-                raise RuntimeError("Render pipeline not implemented yet. Complete Task 4 to enable export.")
+                from recapper.render import RenderPipeline
+                proj_path = STATE.get("project_path")
+                pipeline = RenderPipeline(proj, project_path=proj_path)
+
+                def on_progress(pct, stage, message):
+                    j.update(progress=float(pct), stage=stage, message=message)
+                    j.log(f"{stage}: {message}" if message else stage)
+
+                pipeline.progress_cb = on_progress
+                result = pipeline.render(output_path=out_path, keep_temp=bool(body.get("keep_temp")))
+                j.log(f"Output: {result.output_path}")
+                return {"output_path": str(result.output_path), "output_name": result.output_path.name}
 
             jobs.start(job, run_export)
-            return self._send_json({"job": job.to_dict(include_logs=False)})
+            return self._send_json({"job": job.to_dict(include_logs=False)}, status=202)
 
         return self._send_error_json(404, f"Unknown API route: {path}")
 
