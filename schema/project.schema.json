@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://recapper.local/schema/project.schema.json",
+  "title": "Recapper Project",
+  "type": "object",
+  "required": ["version", "id", "name", "media", "tracks", "clips", "render"],
+  "properties": {
+    "version": { "type": "string" },
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "media": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/mediaAsset" }
+    },
+    "tracks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/track" }
+    },
+    "clips": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/clip" }
+    },
+    "render": { "$ref": "#/$defs/renderSettings" },
+    "meta": { "type": "object", "additionalProperties": true }
+  },
+  "$defs": {
+    "mediaAsset": {
+      "type": "object",
+      "required": ["id", "type", "name", "path"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "enum": ["image", "video", "audio"] },
+        "name": { "type": "string" },
+        "path": { "type": "string", "description": "Path relative to project file or absolute path" },
+        "duration": { "type": ["number", "null"], "minimum": 0 },
+        "width": { "type": ["integer", "null"], "minimum": 1 },
+        "height": { "type": ["integer", "null"], "minimum": 1 },
+        "has_audio": { "type": ["boolean", "null"] },
+        "codec": { "type": ["string", "null"] },
+        "thumbnail": { "type": ["string", "null"] },
+        "probe": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": true
+    },
+    "track": {
+      "type": "object",
+      "required": ["id", "kind", "label"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["visual", "audio"] },
+        "label": { "type": "string" },
+        "order": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "clip": {
+      "type": "object",
+      "required": ["id", "trackId", "type", "start", "duration"],
+      "properties": {
+        "id": { "type": "string" },
+        "trackId": { "type": "string" },
+        "type": { "enum": ["title", "image", "video", "composition", "audio"] },
+        "name": { "type": "string" },
+        "start": { "type": "number", "minimum": 0 },
+        "duration": { "type": "number", "exclusiveMinimum": 0 },
+        "mediaId": { "type": ["string", "null"] },
+        "params": { "type": "object", "additionalProperties": true },
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "color": { "type": "string" },
+        "compLeft": { "type": "string" },
+        "compRight": { "type": "string" },
+        "volume": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "renderSettings": {
+      "type": "object",
+      "properties": {
+        "width": { "type": "integer", "minimum": 16, "default": 1920 },
+        "height": { "type": "integer", "minimum": 16, "default": 1080 },
+        "fps": { "type": "integer", "minimum": 1, "default": 30 },
+        "video_codec": { "type": "string", "default": "libx264" },
+        "audio_codec": { "type": "string", "default": "aac" },
+        "audio_bitrate": { "type": "string", "default": "192k" },
+        "audio_sample_rate": { "type": "integer", "default": 48000 },
+        "audio_channels": { "type": "integer", "default": 2 },
+        "pixel_format": { "type": "string", "default": "yuv420p" },
+        "crf": { "type": "integer", "minimum": 0, "maximum": 51, "default": 18 },
+        "preset": { "type": "string", "default": "medium" },
+        "output_format": { "type": "string", "default": "mp4" },
+        "output_name": { "type": "string", "default": "recap.mp4" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

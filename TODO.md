@@ -1,54 +1,56 @@
 # Task list
 
-1. Define the project model and operation contract
+## 1. Define the project model and operation contract
 
-- Specify a timeline/project schema (JSON) covering project metadata, media assets, tracks, clips, and render settings. Map existing UI clip types to renderable operations: title -> title-slide, image -> image-to-video, composition -> images-to-side-by-side-video, audio -> audio track/mix, video -> passthrough/normalize segment.
-- Define an extensible operation registry contract. Each operation should declare: name, input schema/validation, default params, capability (generates visual, generates audio, transforms, composes), and an ffmpeg command/graph builder. The registry should be the only place needed to add a new name + ffmpeg operation.
-- Decide persistence format/location for project files (e.g., .recapper.json next to media or a chosen workspace) and asset path resolution rules, since users bring their own files.
+- [x] Specify a timeline/project schema (JSON) covering project metadata, media assets, tracks, clips, and render settings. Map existing UI clip types to renderable operations: title -> title-slide, image -> image-to-video, composition -> images-to-side-by-side-video, audio -> audio track/mix, video -> passthrough/normalize segment.
+- [x] Define an extensible operation registry contract. Each operation should declare: name, input schema/validation, default params, capability (generates visual, generates audio, transforms, composes), and an ffmpeg command/graph builder. The registry should be the only place needed to add a new name + ffmpeg operation.
+- [x] Decide persistence format/location for project files (e.g., .recapper.json next to media or a chosen workspace) and asset path resolution rules, since users bring their own files.
 
-2. Build a real backend API in server.py
+## 2. Build a real backend API in server.py
 
-- Replace/extend static-only server with API routes while keeping static UI serving. Include clear request/response errors.
-- Media endpoints: import/register local files or uploads, list media, probe metadata via ffprobe (duration, dimensions, codecs, has audio), and generate/serve thumbnails/stills for images/videos.
-- Project endpoints: create/load/save/update project state; validate against the schema.
-- Render/export endpoints: start export job, poll job status/progress/logs, download/locate final output. Run renders asynchronously so UI stays responsive.
-- System check endpoint: verify ffmpeg/ffprobe availability and report actionable install/path errors.
+- [ ] Replace/extend static-only server with API routes while keeping static UI serving. Include clear request/response errors.
+- [ ] Media endpoints: import/register local files or uploads, list media, probe metadata via ffprobe (duration, dimensions, codecs, has audio), and generate/serve thumbnails/stills for images/videos.
+- [ ] Project endpoints: create/load/save/update project state; validate against the schema.
+- [ ] Render/export endpoints: start export job, poll job status/progress/logs, download/locate final output. Run renders asynchronously so UI stays responsive.
+- [ ] System check endpoint: verify ffmpeg/ffprobe availability and report actionable install/path errors.
 
-3. Port TODO.md ffmpeg scripts into modular operations
+## 3. Port TODO.md ffmpeg scripts into modular operations
 
-- Create an ffmpeg/operations package (e.g., operations/ or recapper/ops/) and extract logic from TODO.md into discrete modules/functions. Remove YAML/CLI coupling; keep pure “inputs + params -> ffmpeg execution/artifact”.
-- title-slide operation: port title.run_ffmpeg; fix hardcoded font path by resolving a bundled/system font or configurable font; expose duration, background/color, title, subtitle, size/fps defaults.
-- image-to-video operation: port image_to_video; parameterize duration, resolution/aspect handling, fps, and output encoding.
-- images-to-side-by-side-video operation: port images_to_side_by_side_video; make layout/crop/size/duration configurable and validate inputs.
-- normalize/concat operations: port concatenate.py behavior. Keep the useful normalization (CFR, pixel format, audio presence/anullsrc injection, sample rate/channels) but fix the old run_from_list output-path bug and make temp/output handling deterministic.
-- Audio mix/overlay operation: port overlay_audio as a timeline-aware audio mix step (background music + clip audio where applicable), with volume controls and duration policy (shortest vs project length).
-- Shared ffmpeg utilities: command runner with stdout/stderr capture, structured errors, temp workspace management, probe helpers, and cancellation/cleanup. Preserve temp files only when debugging.
+- [ ] Create an ffmpeg/operations package (e.g., operations/ or recapper/ops/) and extract logic from TODO.md into discrete modules/functions. Remove YAML/CLI coupling; keep pure “inputs + params -> ffmpeg execution/artifact”.
+- [ ] title-slide operation: port title.run_ffmpeg; fix hardcoded font path by resolving a bundled/system font or configurable font; expose duration, background/color, title, subtitle, size/fps defaults.
+- [ ] image-to-video operation: port image_to_video; parameterize duration, resolution/aspect handling, fps, and output encoding.
+- [ ] images-to-side-by-side-video operation: port images_to_side_by_side_video; make layout/crop/size/duration configurable and validate inputs.
+- [ ] normalize/concat operations: port concatenate.py behavior. Keep the useful normalization (CFR, pixel format, audio presence/anullsrc injection, sample rate/channels) but fix the old run_from_list output-path bug and make temp/output handling deterministic.
+- [ ] Audio mix/overlay operation: port overlay_audio as a timeline-aware audio mix step (background music + clip audio where applicable), with volume controls and duration policy (shortest vs project length).
+- [ ] Shared ffmpeg utilities: command runner with stdout/stderr capture, structured errors, temp workspace management, probe helpers, and cancellation/cleanup. Preserve temp files only when debugging.
 
-4. Implement the render/export pipeline
+## 4. Implement the render/export pipeline
 
-- Timeline compiler: convert project timeline into a deterministic render plan. Resolve clip ordering, track placement, gaps, trims, clip durations, and asset references.
-- Visual render pass: generate intermediate clips for operation-backed visual clips (title/image/composition) and normalize user video clips to a common render profile.
-- Audio render pass: build audio timeline from A1/music clips and any future clip audio; apply per-clip volume/gain; mix down to final audio.
-- Final assembly: concatenate/mux visual + audio into export target (mp4 default). Expose render settings in project/export: resolution, fps, codec/quality preset, output path/name.
-- Progress and diagnostics: emit coarse progress by stage/clip and surface ffmpeg stderr on failure; keep job logs for UI display.
+- [ ] Timeline compiler: convert project timeline into a deterministic render plan. Resolve clip ordering, track placement, gaps, trims, clip durations, and asset references.
+- [ ] Visual render pass: generate intermediate clips for operation-backed visual clips (title/image/composition) and normalize user video clips to a common render profile.
+- [ ] Audio render pass: build audio timeline from A1/music clips and any future clip audio; apply per-clip volume/gain; mix down to final audio.
+- [ ] Final assembly: concatenate/mux visual + audio into export target (mp4 default). Expose render settings in project/export: resolution, fps, codec/quality preset, output path/name.
+- [ ] Progress and diagnostics: emit coarse progress by stage/clip and surface ffmpeg stderr on failure; keep job logs for UI display.
 
-5. Wire the existing UI to real data and behavior
+## 5. Wire the existing UI to real data and behavior
 
-- Media Library becomes real: replace hardcoded MEDIA in static/js/app.js with API-backed items; add import button/drop zone; show thumbnails, duration, type, and probe status. Keep drag-to-timeline and filter tabs.
-- Preview uses real assets: load actual selected/imported media URLs; support video playback in preview; handle missing/unplayable media gracefully.
-- Project state persistence: load/save project through backend; add New/Open/Save and dirty-state indicators. Autosave optional but useful.
-- Inspector covers render-relevant fields: align inspector fields with operation schemas (title text/style, image duration, composition inputs, audio volume/fade later). Avoid hardcoding field logic per type where possible; drive from operation metadata.
-- Timeline operations backed by model: ensure add/move/trim/delete/split-if-added update the project model and survive reload. Add delete affordance in UI (keyboard exists) and basic undo/redo if feasible.
-- Export UI: replace demo toast with export modal/panel calling render API; show ffmpeg availability, output settings, progress, success/failure, and output location/open action.
+- [ ] Media Library becomes real: replace hardcoded MEDIA in static/js/app.js with API-backed items; add import button/drop zone; show thumbnails, duration, type, and probe status. Keep drag-to-timeline and filter tabs.
+- [ ] Preview uses real assets: load actual selected/imported media URLs; support video playback in preview; handle missing/unplayable media gracefully.
+- [ ] Project state persistence: load/save project through backend; add New/Open/Save and dirty-state indicators. Autosave optional but useful.
+- [ ] Inspector covers render-relevant fields: align inspector fields with operation schemas (title text/style, image duration, composition inputs, audio volume/fade later). Avoid hardcoding field logic per type where possible; drive from operation metadata.
+- [ ] Timeline operations backed by model: ensure add/move/trim/delete/split-if-added update the project model and survive reload. Add delete affordance in UI (keyboard exists) and basic undo/redo if feasible.
+- [ ] Export UI: replace demo toast with export modal/panel calling render API; show ffmpeg availability, output settings, progress, success/failure, and output location/open action.
 
-6. Quality, extensibility, and developer ergonomics
+## 6. Quality, extensibility, and developer ergonomics
 
-- Add tests for operation builders and timeline compilation: unit tests for each ported TODO operation’s command/plan generation, normalization rules, and schema validation. Use small fixture assets or mocked probes where possible.
-- Document the extension point: README/dev doc showing how to add a new operation (name, schema, UI fields, ffmpeg builder, registration). This is the key acceptance criterion for the “name + ffmpeg operation” goal.
-- Add sample/demo project migration: convert the current hardcoded demo into a loadable sample project so the prototype experience still works after real data wiring.
-- Polish pass: empty states, error toasts/logs, long-running job feedback, keyboard shortcuts help, and basic accessibility checks for the newly live controls.
+- [ ] Add tests for operation builders and timeline compilation: unit tests for each ported TODO operation’s command/plan generation, normalization rules, and schema validation. Use small fixture assets or mocked probes where possible.
+- [ ] Document the extension point: README/dev doc showing how to add a new operation (name, schema, UI fields, ffmpeg builder, registration). This is the key acceptance criterion for the “name + ffmpeg operation” goal.
+- [ ] Add sample/demo project migration: convert the current hardcoded demo into a loadable sample project so the prototype experience still works after real data wiring.
+- [ ] Polish pass: empty states, error toasts/logs, long-running job feedback, keyboard shortcuts help, and basic accessibility checks for the newly live controls.
 
 # Reference: Gen1 scripts
+
+The original scripts from gen1 are preserved below as reference for Task 3 porting.
 
 ```python
 import yaml, sys, argparse, subprocess, shutil
@@ -250,8 +252,6 @@ def main(args=None):
     setup_parser(parser)
     args = parser.parse_args(args)
     run(args.file)
-
-    # run_ffmpeg(args.duration, args.color, args.output_file, args.title, args.subtitle)
 
 
 if __name__ == "__main__":
