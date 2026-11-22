@@ -236,6 +236,10 @@ class RecapperHandler(SimpleHTTPRequestHandler):
         if path == "/api/system/check":
             return self._send_json(check_system())
 
+        if path == "/api/operations":
+            from recapper.ops import registry
+            return self._send_json({"operations": registry.schemas(), "clip_type_mappings": registry.clip_type_mappings()})
+
         if path == "/api/project":
             proj = _get_project()
             return self._send_json({"project": proj.to_dict(), "path": str(STATE["project_path"]) if STATE["project_path"] else None})

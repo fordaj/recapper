@@ -26,11 +26,16 @@
         <span class="project-name" id="projectName">Summer 2026 Recap</span>
       </div>
       <div class="topbar-actions">
+        <button class="btn btn-ghost btn-sm" id="btnNewProject" title="New project">New</button>
+        <button class="btn btn-ghost btn-sm" id="btnOpenProject" title="Open project">Open</button>
+        <button class="btn btn-ghost btn-sm" id="btnSaveProject" title="Save project">Save</button>
+        <div class="topbar-divider"></div>
         <button class="btn btn-ghost" id="btnZoomOut" title="Zoom out timeline">−</button>
         <span class="zoom-label" id="zoomLabel">100%</span>
         <button class="btn btn-ghost" id="btnZoomIn" title="Zoom in timeline">+</button>
         <div class="topbar-divider"></div>
-        <button class="btn btn-primary" id="btnExport" title="Export (demo)">
+        <span class="save-status" id="saveStatus"></span>
+        <button class="btn btn-primary" id="btnExport" title="Export video">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Export
         </button>
@@ -41,7 +46,11 @@
       <aside class="panel media-panel">
         <div class="panel-header">
           <h2 class="panel-title">Media Library</h2>
-          <span class="panel-count" id="mediaCount">0 items</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="panel-count" id="mediaCount">0 items</span>
+            <button class="btn btn-ghost btn-sm" id="btnImportMedia" title="Import media files">Import</button>
+            <input type="file" id="mediaFileInput" multiple accept="image/*,video/*,audio/*" style="display:none" />
+          </div>
         </div>
         <div class="media-tabs">
           <button class="media-tab active" data-filter="all">All</button>
@@ -178,6 +187,30 @@
         </div>
       </div>
     </section>
+  </div>
+
+  <div class="modal-backdrop" id="exportModal" style="display:none">
+    <div class="modal">
+      <div class="modal-header"><h3>Export Video</h3><button class="btn btn-ghost btn-sm" id="btnCloseExport">✕</button></div>
+      <div class="modal-body">
+        <div class="field"><label class="field-label">Output name</label><input class="field-input" id="exportName" type="text" value="recap.mp4" /></div>
+        <div class="field-row">
+          <div class="field"><label class="field-label">Width</label><input class="field-input" id="exportWidth" type="number" value="1920" /></div>
+          <div class="field"><label class="field-label">Height</label><input class="field-input" id="exportHeight" type="number" value="1080" /></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label class="field-label">FPS</label><input class="field-input" id="exportFps" type="number" value="30" /></div>
+          <div class="field"><label class="field-label">CRF (quality)</label><input class="field-input" id="exportCrf" type="number" value="18" min="0" max="51" /></div>
+        </div>
+        <div class="field"><label class="field-label">FFmpeg status</label><div id="exportSystemStatus" class="inspector-meta">Checking...</div></div>
+        <div class="field"><label class="field-label">Progress</label><div class="export-progress"><div class="export-progress-bar" id="exportProgressBar" style="width:0%"></div></div><div id="exportProgressText" class="inspector-meta">Idle</div></div>
+        <pre class="export-log" id="exportLog"></pre>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="btnCloseExport2">Close</button>
+        <button class="btn btn-primary" id="btnStartExport">Start Export</button>
+      </div>
+    </div>
   </div>
   <div class="toast" id="toast"></div>
   <script src="/static/js/app.js"></script>

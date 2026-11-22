@@ -34,12 +34,12 @@
 
 ## 5. Wire the existing UI to real data and behavior
 
-- [ ] Media Library becomes real: replace hardcoded MEDIA in static/js/app.js with API-backed items; add import button/drop zone; show thumbnails, duration, type, and probe status. Keep drag-to-timeline and filter tabs.
-- [ ] Preview uses real assets: load actual selected/imported media URLs; support video playback in preview; handle missing/unplayable media gracefully.
-- [ ] Project state persistence: load/save project through backend; add New/Open/Save and dirty-state indicators. Autosave optional but useful.
-- [ ] Inspector covers render-relevant fields: align inspector fields with operation schemas (title text/style, image duration, composition inputs, audio volume/fade later). Avoid hardcoding field logic per type where possible; drive from operation metadata.
-- [ ] Timeline operations backed by model: ensure add/move/trim/delete/split-if-added update the project model and survive reload. Add delete affordance in UI (keyboard exists) and basic undo/redo if feasible.
-- [ ] Export UI: replace demo toast with export modal/panel calling render API; show ffmpeg availability, output settings, progress, success/failure, and output location/open action.
+- [x] Media Library becomes real: replace hardcoded MEDIA in static/js/app.js with API-backed items; add import button/drop zone; show thumbnails, duration, type, and probe status. Keep drag-to-timeline and filter tabs.
+- [x] Preview uses real assets: load actual selected/imported media URLs; support video playback in preview; handle missing/unplayable media gracefully.
+- [x] Project state persistence: load/save project through backend; add New/Open/Save and dirty-state indicators. Autosave optional but useful.
+- [x] Inspector covers render-relevant fields: align inspector fields with operation schemas (title text/style, image duration, composition inputs, audio volume/fade later). Avoid hardcoding field logic per type where possible; drive from operation metadata.
+- [x] Timeline operations backed by model: ensure add/move/trim/delete/split-if-added update the project model and survive reload. Add delete affordance in UI (keyboard exists) and basic undo/redo if feasible.
+- [x] Export UI: replace demo toast with export modal/panel calling render API; show ffmpeg availability, output settings, progress, success/failure, and output location/open action.
 
 ## 6. Quality, extensibility, and developer ergonomics
 
