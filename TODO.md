@@ -8,11 +8,11 @@
 
 ## 2. Build a real backend API in server.py
 
-- [ ] Replace/extend static-only server with API routes while keeping static UI serving. Include clear request/response errors.
-- [ ] Media endpoints: import/register local files or uploads, list media, probe metadata via ffprobe (duration, dimensions, codecs, has audio), and generate/serve thumbnails/stills for images/videos.
-- [ ] Project endpoints: create/load/save/update project state; validate against the schema.
-- [ ] Render/export endpoints: start export job, poll job status/progress/logs, download/locate final output. Run renders asynchronously so UI stays responsive.
-- [ ] System check endpoint: verify ffmpeg/ffprobe availability and report actionable install/path errors.
+- [x] Replace/extend static-only server with API routes while keeping static UI serving. Include clear request/response errors.
+- [x] Media endpoints: import/register local files or uploads, list media, probe metadata via ffprobe (duration, dimensions, codecs, has audio), and generate/serve thumbnails/stills for images/videos.
+- [x] Project endpoints: create/load/save/update project state; validate against the schema.
+- [x] Render/export endpoints: start export job, poll job status/progress/logs, download/locate final output. Run renders asynchronously so UI stays responsive.
+- [x] System check endpoint: verify ffmpeg/ffprobe availability and report actionable install/path errors.
 
 ## 3. Port TODO.md ffmpeg scripts into modular operations
 
