@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recapper - Timeline Editor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="14" rx="3" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M10 8l5 3-5 3V8z" fill="currentColor"/></svg>
+        </div>
+        <div>
+          <div class="brand-name">Recapper</div>
+          <div class="brand-sub">Family Recap Editor</div>
+        </div>
+      </div>
+      <div class="project-info">
+        <span class="project-label">Project</span>
+        <span class="project-name" id="projectName">Summer 2026 Recap</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" id="btnZoomOut" title="Zoom out timeline">−</button>
+        <span class="zoom-label" id="zoomLabel">100%</span>
+        <button class="btn btn-ghost" id="btnZoomIn" title="Zoom in timeline">+</button>
+        <div class="topbar-divider"></div>
+        <button class="btn btn-primary" id="btnExport" title="Export (demo)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="panel media-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Media Library</h2>
+          <span class="panel-count" id="mediaCount">0 items</span>
+        </div>
+        <div class="media-tabs">
+          <button class="media-tab active" data-filter="all">All</button>
+          <button class="media-tab" data-filter="image">Photos</button>
+          <button class="media-tab" data-filter="video">Videos</button>
+          <button class="media-tab" data-filter="audio">Audio</button>
+        </div>
+        <div class="media-grid" id="mediaGrid"></div>
+        <div class="panel-footer-hint">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Drag items to the timeline
+        </div>
+      </aside>
+
+      <main class="preview-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Preview</h2>
+          <div class="preview-time" id="previewTime">00:00.0 / 00:00.0</div>
+        </div>
+        <div class="preview-stage" id="previewStage">
+          <div class="preview-canvas" id="previewCanvas">
+            <div class="preview-empty" id="previewEmpty">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M10 8l5 3-5 3V8z"/></svg>
+              <p>Select a clip or press play to preview</p>
+            </div>
+            <img id="previewImage" class="preview-media" alt="" />
+            <video id="previewVideo" class="preview-media" muted playsinline></video>
+            <div id="previewTitle" class="preview-title-card">
+              <div class="preview-title-text" id="previewTitleText"></div>
+              <div class="preview-title-sub" id="previewTitleSub"></div>
+            </div>
+            <div id="previewComposition" class="preview-composition">
+              <div class="comp-pane"><img id="compLeft" alt="" /><div class="comp-label" id="compLeftLabel"></div></div>
+              <div class="comp-pane"><img id="compRight" alt="" /><div class="comp-label" id="compRightLabel"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="transport">
+          <button class="transport-btn" id="btnSkipBack" title="Skip to start">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="5" width="2" height="14"/><path d="M19 5L9 12l10 7V5z"/></svg>
+          </button>
+          <button class="transport-btn transport-play" id="btnPlay" title="Play/Pause">
+            <svg id="iconPlay" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l11 7-11 7V5z"/></svg>
+            <svg id="iconPause" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
+          </button>
+          <button class="transport-btn" id="btnSkipForward" title="Skip to end">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M5 5l10 7-10 7V5z"/><rect x="18" y="5" width="2" height="14"/></svg>
+          </button>
+        </div>
+      </main>
+
+      <aside class="panel inspector-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Properties</h2>
+          <span class="inspector-type" id="inspectorType">None</span>
+        </div>
+        <div class="inspector-body" id="inspectorBody">
+          <div class="inspector-empty" id="inspectorEmpty">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            <p>Select a clip on the timeline to edit its properties.</p>
+          </div>
+          <div class="inspector-form" id="inspectorForm" style="display:none">
+            <div class="field">
+              <label class="field-label" for="propName">Name</label>
+              <input class="field-input" id="propName" type="text" />
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label class="field-label" for="propStart">Start (s)</label>
+                <input class="field-input" id="propStart" type="number" min="0" step="0.1" />
+              </div>
+              <div class="field">
+                <label class="field-label" for="propDuration">Duration (s)</label>
+                <input class="field-input" id="propDuration" type="number" min="0.5" step="0.1" />
+              </div>
+            </div>
+            <div class="field" id="fieldTitle">
+              <label class="field-label" for="propTitle">Title Text</label>
+              <input class="field-input" id="propTitle" type="text" />
+            </div>
+            <div class="field" id="fieldSubtitle">
+              <label class="field-label" for="propSubtitle">Subtitle</label>
+              <input class="field-input" id="propSubtitle" type="text" />
+            </div>
+            <div class="field" id="fieldComposition">
+              <label class="field-label">Composition</label>
+              <div class="comp-editor">
+                <div class="comp-slot">
+                  <span class="comp-slot-label">Left</span>
+                  <select class="field-input" id="propCompLeft"></select>
+                </div>
+                <div class="comp-slot">
+                  <span class="comp-slot-label">Right</span>
+                  <select class="field-input" id="propCompRight"></select>
+                </div>
+              </div>
+            </div>
+            <div class="field" id="fieldVolume">
+              <label class="field-label" for="propVolume">Volume <span id="propVolumeVal">100%</span></label>
+              <input class="field-range" id="propVolume" type="range" min="0" max="100" step="1" />
+            </div>
+            <div class="field" id="fieldColor">
+              <label class="field-label" for="propColor">Accent</label>
+              <input class="field-color" id="propColor" type="color" />
+            </div>
+            <div class="inspector-meta" id="inspectorMeta"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="timeline-panel">
+      <div class="timeline-toolbar">
+        <div class="timeline-toolbar-left">
+          <h2 class="panel-title">Timeline</h2>
+          <span class="timeline-hint">Drag clips to reorder · Drag edges to trim</span>
+        </div>
+        <div class="timeline-toolbar-right">
+          <button class="btn btn-ghost btn-sm" id="btnAddTitle">+ Title</button>
+          <button class="btn btn-ghost btn-sm" id="btnAddComp">+ Composition</button>
+        </div>
+      </div>
+      <div class="timeline-shell">
+        <div class="track-labels" id="trackLabels"></div>
+        <div class="timeline-scroll" id="timelineScroll">
+          <div class="timeline-canvas" id="timelineCanvas">
+            <div class="time-ruler" id="timeRuler"></div>
+            <div class="tracks" id="tracks"></div>
+            <div class="playhead" id="playhead" style="left:0px">
+              <div class="playhead-head"></div>
+              <div class="playhead-line"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
