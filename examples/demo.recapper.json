@@ -1,0 +1,142 @@
+{
+  "version": "1.0",
+  "id": "proj_demo",
+  "name": "Summer 2026 Recap",
+  "created_at": "2026-01-01T00:00:00Z",
+  "updated_at": "2026-01-01T00:00:00Z",
+  "media": [
+    {
+      "id": "m1",
+      "type": "image",
+      "name": "Family Beach Day",
+      "path": "../static/media/images/family.jpg",
+      "duration": 4
+    },
+    {
+      "id": "m2",
+      "type": "image",
+      "name": "Sunset",
+      "path": "../static/media/images/sunset.jpg",
+      "duration": 3.5
+    },
+    {
+      "id": "m3",
+      "type": "image",
+      "name": "Campfire",
+      "path": "../static/media/images/campfire.jpg",
+      "duration": 4
+    },
+    {
+      "id": "m4",
+      "type": "image",
+      "name": "Lake",
+      "path": "../static/media/images/lake.jpg",
+      "duration": 3.5
+    },
+    {
+      "id": "m7",
+      "type": "image",
+      "name": "Boat Ride",
+      "path": "../static/media/images/boat.jpg",
+      "duration": 4
+    },
+    {
+      "id": "m8",
+      "type": "image",
+      "name": "Beach",
+      "path": "../static/media/images/beach.jpg",
+      "duration": 3.5
+    }
+  ],
+  "tracks": [
+    {
+      "id": "V1",
+      "kind": "visual",
+      "label": "Video 1",
+      "order": 0
+    },
+    {
+      "id": "A1",
+      "kind": "audio",
+      "label": "Audio 1",
+      "order": 1
+    }
+  ],
+  "clips": [
+    {
+      "id": "c1",
+      "trackId": "V1",
+      "type": "title",
+      "name": "Opening Title",
+      "start": 0,
+      "duration": 3,
+      "params": {
+        "title": "Summer 2026",
+        "subtitle": "The Anderson Family Recap",
+        "color": "#f0b45c"
+      }
+    },
+    {
+      "id": "c2",
+      "trackId": "V1",
+      "type": "image",
+      "name": "Family Beach Day",
+      "start": 3,
+      "duration": 4,
+      "mediaId": "m1",
+      "params": {}
+    },
+    {
+      "id": "c3",
+      "trackId": "V1",
+      "type": "image",
+      "name": "Sunset",
+      "start": 7,
+      "duration": 3.5,
+      "mediaId": "m2",
+      "params": {}
+    },
+    {
+      "id": "c4",
+      "trackId": "V1",
+      "type": "composition",
+      "name": "Lake & Boat",
+      "start": 10.5,
+      "duration": 4,
+      "params": {
+        "compLeft": "m4",
+        "compRight": "m7"
+      }
+    },
+    {
+      "id": "c5",
+      "trackId": "V1",
+      "type": "image",
+      "name": "Campfire",
+      "start": 14.5,
+      "duration": 4,
+      "mediaId": "m3",
+      "params": {}
+    },
+    {
+      "id": "c6",
+      "trackId": "V1",
+      "type": "title",
+      "name": "Closing Title",
+      "start": 18.5,
+      "duration": 3,
+      "params": {
+        "title": "Until Next Summer",
+        "subtitle": "Made with Recapper",
+        "color": "#f0b45c"
+      }
+    }
+  ],
+  "render": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "crf": 18,
+    "output_name": "summer-2026-recap.mp4"
+  }
+}

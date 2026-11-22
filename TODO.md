@@ -43,10 +43,10 @@
 
 ## 6. Quality, extensibility, and developer ergonomics
 
-- [ ] Add tests for operation builders and timeline compilation: unit tests for each ported TODO operation’s command/plan generation, normalization rules, and schema validation. Use small fixture assets or mocked probes where possible.
-- [ ] Document the extension point: README/dev doc showing how to add a new operation (name, schema, UI fields, ffmpeg builder, registration). This is the key acceptance criterion for the “name + ffmpeg operation” goal.
-- [ ] Add sample/demo project migration: convert the current hardcoded demo into a loadable sample project so the prototype experience still works after real data wiring.
-- [ ] Polish pass: empty states, error toasts/logs, long-running job feedback, keyboard shortcuts help, and basic accessibility checks for the newly live controls.
+- [x] Add tests for operation builders and timeline compilation: unit tests for each ported TODO operation’s command/plan generation, normalization rules, and schema validation. Use small fixture assets or mocked probes where possible.
+- [x] Document the extension point: README/dev doc showing how to add a new operation (name, schema, UI fields, ffmpeg builder, registration). This is the key acceptance criterion for the “name + ffmpeg operation” goal.
+- [x] Add sample/demo project migration: convert the current hardcoded demo into a loadable sample project so the prototype experience still works after real data wiring.
+- [x] Polish pass: empty states, error toasts/logs, long-running job feedback, keyboard shortcuts help, and basic accessibility checks for the newly live controls.
 
 # Reference: Gen1 scripts
 

@@ -746,6 +746,12 @@
 
     $('#btnImportMedia').addEventListener('click', () => $('#mediaFileInput').click());
     $('#mediaFileInput').addEventListener('change', (e) => { importMediaFiles(e.target.files); e.target.value = ''; });
+    const mediaPanel = document.querySelector('.media-panel');
+    mediaPanel.addEventListener('dragover', (e) => { if (e.dataTransfer.types.includes('Files')) { e.preventDefault(); mediaPanel.classList.add('drag-over'); } });
+    mediaPanel.addEventListener('dragleave', () => mediaPanel.classList.remove('drag-over'));
+    mediaPanel.addEventListener('drop', (e) => {
+      if (e.dataTransfer.files && e.dataTransfer.files.length) { e.preventDefault(); mediaPanel.classList.remove('drag-over'); importMediaFiles(e.dataTransfer.files); }
+    });
     $('#btnSaveProject').addEventListener('click', saveProject);
     $('#btnOpenProject').addEventListener('click', openProject);
     $('#btnNewProject').addEventListener('click', newProject);

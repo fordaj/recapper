@@ -1,27 +1,51 @@
 # Recapper
 
-A Python server and timeline-first video editor prototype for creating family recap videos.
+A local Python timeline editor for creating family recap videos with FFmpeg.
 
-## Timeline Editor Prototype
-
-This branch includes a working timeline-editor UI prototype based on the pitch in `TODO.md`.
-
-### Run
+## Run
 
 ```bash
 python3 server.py
 ```
 
-Then open <http://127.0.0.1:8000>.
+Open <http://127.0.0.1:8000>.
 
-### What’s included
+Requirements: `ffmpeg` and `ffprobe` available on `PATH`.
 
-- **Preview**: Prominent preview for the selected clip or playhead position.
-- **Media Library**: Sample photos, videos, and audio items with drag-to-timeline support.
-- **Properties Inspector**: Context-sensitive controls for clip name, timing, title text, composition, volume, and accent.
-- **Timeline**: Horizontal multi-track timeline with ruler, playhead, clip selection, trimming, drag reordering, and zoom.
+## What it does
 
-### Notes
+- **Media Library**: import local photos/videos/audio, probe metadata with ffprobe, generate thumbnails.
+- **Timeline**: multi-track timeline with drag/drop, trim, reorder, playhead, zoom.
+- **Preview**: preview selected clip or playhead position for images, videos, titles, and compositions.
+- **Inspector**: edit clip timing, title text, composition inputs, volume, and accent.
+- **Export**: compile timeline into FFmpeg operations and render an mp4 asynchronously with progress/logs.
 
-- This is a UI prototype focused on the editing experience described in `TODO.md`.
-- Export and some media behaviors are demo placeholders.
+## Project model
+
+Projects are stored as JSON (`.recapper.json` by default). Asset paths are relative to the project file when possible, otherwise absolute. See:
+
+- `docs/project-model.md`
+- `schema/project.schema.json`
+- `examples/demo.recapper.json` (sample project; open by path in UI)
+
+## Extensible operations
+
+Adding a new `name + ffmpeg operation` should only require registering an operation definition. See `docs/adding-operations.md`.
+
+Built-in operations:
+
+| Clip type | Operation | Capability |
+|---|---|---|
+| `title` | `title-slide` | generates visual |
+| `image` | `image-to-video` | generates visual |
+| `composition` | `images-to-side-by-side-video` | composes |
+| `video` | `normalize-video` | transforms visual |
+| `audio` | `audio-track` | mixes audio |
+
+## Development
+
+Run tests:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
